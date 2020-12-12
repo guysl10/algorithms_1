@@ -1,53 +1,16 @@
 import itertools
-from dataclasses import dataclass
 import random
 from typing import List, Tuple
 import heapq
 
-
-@classmethod
-class Node:
-    id: int
-    key: int = 0
-    father = None
+from graph import Edge, Graph, Node
 
 
-class Edge:
-    def __init__(self, node1: Node, node2: Node, weight: int):
-        self.node1 = node1
-        self.node2 = node2
-        self.weight = weight
-
-    def __gt__(self, other):
-        return self.weight > other.weight
-
-    def __lt__(self, other):
-        return self.weight < other.weight
-
-    def __sub__(self, other):
-        return self.weight - other.weight
-
-    def __add__(self, other):
-        return self.weight + other.weight
-
-    def __mul__(self, other):
-        return self.weight * other.weight
-
-
-@dataclass
-class Graph:
-    V: List[Node]
-    E: List[Edge]
-
-    def weight(self, edge: Edge):
-        generate
-
-
-def heap_sort(edges: List[Edge]):
+def heap_sort(edges: List[Edge]) -> List[Edge]:
     """
     Heap Sort Algorithm
     :param edges:
-    :return:
+    :return
     """
     h = []
     for edge in edges:
@@ -63,7 +26,7 @@ def get_children(node: Node, graph: Graph) -> List[Edge]:
     :param graph:
     :return:
     """
-    return [E for E in graph.E if node in E.node1]
+    return [E for E in graph.e if node in E.node1]
 
 
 def prim(graph: Graph, root: Node, weight: callable):
@@ -75,14 +38,13 @@ def prim(graph: Graph, root: Node, weight: callable):
     :return:
     """
     # Q = sorted(graph.E, key=lambda k: k.weight)
-
-    Q = heap_sort(graph.E)
+    q = heap_sort(graph.e)
 
     root.key = 0
     root.parent = None
 
-    while Q:
-        min_node = heapq.heappop(Q)
+    while q:
+        min_node = heapq.heappop(q)
 
         min_child = min(get_children(min_node, graph))
         min_child.father = min_child
@@ -101,6 +63,7 @@ def main():
             edges.remove(E)
 
     prim(Graph(nodes, edges), random.choice(nodes), weight_func)
+
 
 if __name__ == "__main__":
     main()
