@@ -34,5 +34,10 @@ class Edge:
 
 @dataclass
 class Graph:
+    """
+    Represent a graph without directions.
+    :ivar v: All nodes of graph.
+    :ivar e: All edges of graph.
+    """
     v: List[Node]
     e: List[Edge]

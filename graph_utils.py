@@ -31,7 +31,8 @@ def get_children(node: Node, graph: Graph) -> List[Edge]:
     :param graph: graph to search edges given node involve in.
     :return: all edges given node is part of.
     """
-    return [edge for edge in graph.e if node in edge.node1]
+    return [edge for edge in graph.e
+            if node in edge.node1 or node in edge.node2]
 
 
 def weight(graph: Graph, edge_index: int) -> int:
