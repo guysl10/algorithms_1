@@ -1,6 +1,6 @@
 import itertools
 import random
-from typing import List, Tuple
+from typing import List
 import heapq
 
 from graph import Edge, Graph, Node
@@ -58,9 +58,9 @@ def main():
     for first, second in combinations:
         edges.append(Edge(first, second, ))
 
-    for i, E in enumerate(edges):
+    for i, e in enumerate(edges):
         if i % 2 == 0:
-            edges.remove(E)
+            edges.remove(e)
 
     prim(Graph(nodes, edges), random.choice(nodes), weight_func)
 
