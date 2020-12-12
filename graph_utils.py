@@ -9,19 +9,28 @@ WEIGHT_START_RANGE = 1
 WEIGHT_END_RANGE = 10
 NODES_SIZE_START_RANGE = 5
 NODES_SIZE_END_RANGE = 8
+INFINITY_VALUE = 999
 
 
-def heap_sort(edges: List[Edge]) -> List[Edge]:
+def heap_sort(graph: Graph, root: Node) -> List[Edge]:
     """
     Heap Sort Algorithm on all edges.
-    :param edges: edges to sort.
+    :param graph: edges to sort.
+    :param root: starting point of the heap.
     :return: sorted edges.
     """
     h = []
-    for edge in edges:
-        heapq.heappush(h, edge)
-
-    return [heapq.heappop(h) for i in range(len(h))]
+    heapq.heappush(h, root)
+    children = sorted([node for node in get_children(root, graph)
+                       if node != root])
+    for child in children:
+        heapq.heappush(h, child)
+    #TODO: continue heap_sort...
+    #
+    # for edge in nodes:
+    #     heapq.heappush(h, edge)
+    #
+    # return [heapq.heappop(h) for i in range(len(h))]
 
 
 def get_children(node: Node, graph: Graph) -> List[Edge]:
@@ -57,16 +66,19 @@ def prim(graph: Graph, root: Node, weight: callable):
     :param weight: weight function of node.
     :return: NMT graph (after running prim's algorithm).
     """
-    # Q = sorted(graph.E, key=lambda k: k.weight)
-    q = heap_sort(graph.e)
+    for node in graph.v:
+        node.key = INFINITY_VALUE
+
+    q = heap_sort(graph.e, root)
 
     root.key = 0
     root.parent = None
 
     while q:
-        min_node = heapq.heappop(q)
+        min_edge = heapq.heappop(q)
 
-        min_child = min(get_children(min_node, graph))
+        min_child = min(get_children(min_edge, graph))
+
         min_child.father = min_child
 
 
