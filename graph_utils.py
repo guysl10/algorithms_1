@@ -13,9 +13,9 @@ NODES_SIZE_END_RANGE = 8
 
 def heap_sort(edges: List[Edge]) -> List[Edge]:
     """
-    Heap Sort Algorithm
-    :param edges:
-    :return
+    Heap Sort Algorithm on all edges.
+    :param edges: edges to sort.
+    :return: sorted edges.
     """
     h = []
     for edge in edges:
@@ -51,10 +51,10 @@ def weight(graph: Graph, edge_index: int) -> int:
 def prim(graph: Graph, root: Node, weight: callable):
     """
     Prim's algorithm
-    :param graph:
-    :param root:
-    :param weight:
-    :return:
+    :param graph: given graph to run prim's algorithm on.
+    :param root: starting node of prim's algorithm.
+    :param weight: weight function of node.
+    :return: NMT graph (after running prim's algorithm).
     """
     # Q = sorted(graph.E, key=lambda k: k.weight)
     q = heap_sort(graph.e)
