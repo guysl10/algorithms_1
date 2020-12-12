@@ -5,6 +5,9 @@ import heapq
 
 from graph import Edge, Graph, Node
 
+WEIGHT_START_RANGE = 1
+WEIGHT_END_RANGE = 10
+
 
 def heap_sort(edges: List[Edge]) -> List[Edge]:
     """
@@ -27,6 +30,13 @@ def get_children(node: Node, graph: Graph) -> List[Edge]:
     :return:
     """
     return [E for E in graph.e if node in E.node1]
+
+
+def weight(graph: Graph, edge_index: int) -> int:
+    if graph.e[edge_index].weight == 0:
+        graph.e[edge_index].weight = random.randint(WEIGHT_START_RANGE,
+                                                    WEIGHT_END_RANGE)
+    return graph.e[edge_index].weight
 
 
 def prim(graph: Graph, root: Node, weight: callable):

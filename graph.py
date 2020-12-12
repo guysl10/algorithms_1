@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from random import random
 from typing import List
 
 
@@ -10,10 +11,10 @@ class Node:
 
 
 class Edge:
-    def __init__(self, node1: Node, node2: Node, weight: int):
+    def __init__(self, node1: Node, node2: Node):
         self.node1 = node1
         self.node2 = node2
-        self.weight = weight
+        self.weight = 0
 
     def __gt__(self, other):
         return self.weight > other.weight
@@ -35,7 +36,3 @@ class Edge:
 class Graph:
     V: List[Node]
     e: List[Edge]
-
-    # TODO: create weight function...
-    # def weight(self, edge: Edge):
-    #     generate
