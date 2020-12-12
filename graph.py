@@ -34,5 +34,5 @@ class Edge:
 
 @dataclass
 class Graph:
-    V: List[Node]
+    v: List[Node]
     e: List[Edge]
