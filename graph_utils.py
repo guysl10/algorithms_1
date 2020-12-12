@@ -26,12 +26,12 @@ def heap_sort(edges: List[Edge]) -> List[Edge]:
 
 def get_children(node: Node, graph: Graph) -> List[Edge]:
     """
-
-    :param node:
-    :param graph:
-    :return:
+    Get all edges the given node is part of.
+    :param node: given node to search in all edges in graph.
+    :param graph: graph to search edges given node involve in.
+    :return: all edges given node is part of.
     """
-    return [E for E in graph.e if node in E.node1]
+    return [edge for edge in graph.e if node in edge.node1]
 
 
 def weight(graph: Graph, edge_index: int) -> int:
@@ -70,6 +70,7 @@ def prim(graph: Graph, root: Node, weight: callable):
 
 
 def generate_graph() -> Graph:
+    """Generate new graph with random all nodes & edges."""
     num_of_nodes = random.randint(NODES_SIZE_START_RANGE, NODES_SIZE_END_RANGE)
     nodes = [Node(random.randint(1, 10)) for _ in range(num_of_nodes)]
     combinations = list(itertools.combinations(nodes, 2))
@@ -82,8 +83,8 @@ def generate_graph() -> Graph:
 
 
 def main():
-    graph = generate_graph()
-    prim(graph, random.choice(graph.v), weight)
+    new_graph = generate_graph()
+    prim(new_graph, random.choice(new_graph.v), weight)
 
 
 if __name__ == "__main__":
