@@ -12,16 +12,6 @@ NODES_SIZE_END_RANGE = 8
 INFINITY_VALUE = 999
 
 
-def heap_sort(graph: Graph, root: Node) -> List[Node]:
-    """
-    Heap Sort Algorithm on all edges.
-    :param graph: edges to sort.
-    :param root: starting point of the heap.
-    :return: sorted edges.
-    """
-    h = []
-
-
 def heap_insert(graph: Graph, root: Node) -> List[Node]:
     """Fill the heap with all the graph nodes after sorting them."""
     h = []
