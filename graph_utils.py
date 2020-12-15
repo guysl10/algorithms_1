@@ -12,7 +12,7 @@ NODES_SIZE_END_RANGE = 8
 INFINITY_VALUE = 999
 
 
-def heap_sort(graph: Graph, root: Node) -> List[Edge]:
+def heap_sort(graph: Graph, root: Node) -> List[Node]:
     """
     Heap Sort Algorithm on all edges.
     :param graph: edges to sort.
@@ -20,28 +20,36 @@ def heap_sort(graph: Graph, root: Node) -> List[Edge]:
     :return: sorted edges.
     """
     h = []
-    heapq.heappush(h, root)
-    children = sorted([node for node in get_children(root, graph)
-                       if node != root])
+
+
+def fill_heap(graph: Graph, root: Node, h: List[Node]) -> List[Node]:
+    if root is None:
+        return []
+
+    if root not in h:
+        heapq.heappush(h, root)
+    children = sorted(get_children(root, graph))
     for child in children:
-        heapq.heappush(h, child)
-    #TODO: continue heap_sort...
-    #
-    # for edge in nodes:
-    #     heapq.heappush(h, edge)
-    #
-    # return [heapq.heappop(h) for i in range(len(h))]
+        for node in fill_heap(graph, child, h):
+            heapq.heappush(h, node)
 
 
-def get_children(node: Node, graph: Graph) -> List[Edge]:
+def get_children(node: Node, graph: Graph) -> List[Node]:
     """
-    Get all edges the given node is part of.
+    Get all nodes the given node share edge with.
     :param node: given node to search in all edges in graph.
     :param graph: graph to search edges given node involve in.
     :return: all edges given node is part of.
     """
-    return [edge for edge in graph.e
-            if node in edge.node1 or node in edge.node2]
+    children = []
+    for edge in graph.e:
+        #TODO: how to ignore the root??
+        if node in (edge.node1, edge.node1):
+            if node == edge.node1:
+                children.append(edge.node2)
+            else:
+                children.append(edge.node1)
+    return children
 
 
 def weight(graph: Graph, edge_index: int) -> int:
@@ -58,28 +66,28 @@ def weight(graph: Graph, edge_index: int) -> int:
     return graph.e[edge_index].weight
 
 
-def prim(graph: Graph, root: Node, weight: callable):
-    """
-    Prim's algorithm
-    :param graph: given graph to run prim's algorithm on.
-    :param root: starting node of prim's algorithm.
-    :param weight: weight function of node.
-    :return: NMT graph (after running prim's algorithm).
-    """
-    for node in graph.v:
-        node.key = INFINITY_VALUE
-
-    q = heap_sort(graph.e, root)
-
-    root.key = 0
-    root.parent = None
-
-    while q:
-        min_edge = heapq.heappop(q)
-
-        min_child = min(get_children(min_edge, graph))
-
-        min_child.father = min_child
+# def prim(graph: Graph, root: Node, weight: callable):
+#     """
+#     Prim's algorithm
+#     :param graph: given graph to run prim's algorithm on.
+#     :param root: starting node of prim's algorithm.
+#     :param weight: weight function of node.
+#     :return: NMT graph (after running prim's algorithm).
+#     """
+#     for node in graph.v:
+#         node.key = INFINITY_VALUE
+#
+#     q = heap_sort(graph.e, root)
+#
+#     root.key = 0
+#     root.parent = None
+#
+#     while q:
+#         min_edge = heapq.heappop(q)
+#
+#         min_child = min(get_children(min_edge, graph))
+#
+#         min_child.father = min_child
 
 
 def generate_graph() -> Graph:
@@ -97,8 +105,8 @@ def generate_graph() -> Graph:
 
 def main():
     new_graph = generate_graph()
-    prim(new_graph, random.choice(new_graph.v), weight)
-
+    #prim(new_graph, random.choice(new_graph.v), weight)
+    print(new_graph)
 
 if __name__ == "__main__":
     main()
