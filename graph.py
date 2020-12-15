@@ -15,6 +15,7 @@ class Edge:
         self.node1 = node1
         self.node2 = node2
         self.weight = 0
+        self.visited = False
 
     def __gt__(self, other):
         return self.weight > other.weight

@@ -23,6 +23,7 @@ def heap_sort(graph: Graph, root: Node) -> List[Node]:
 
 
 def fill_heap(graph: Graph, root: Node, h: List[Node]) -> List[Node]:
+    """Fill the heap with all the graph nodes after sorting them."""
     if root is None:
         return []
 
@@ -43,12 +44,12 @@ def get_children(node: Node, graph: Graph) -> List[Node]:
     """
     children = []
     for edge in graph.e:
-        #TODO: how to ignore the root??
-        if node in (edge.node1, edge.node1):
+        if node in (edge.node1, edge.node1) and not edge.visited:
             if node == edge.node1:
                 children.append(edge.node2)
             else:
                 children.append(edge.node1)
+        edge.visited = True
     return children
 
 
