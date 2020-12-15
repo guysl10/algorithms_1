@@ -1,7 +1,7 @@
+import heapq
 import itertools
 import random
-from typing import List, Tuple
-import heapq
+from typing import List
 
 from graph import Edge, Graph, Node
 
@@ -16,20 +16,21 @@ def heap_insert(graph: Graph, root: Node) -> List[Node]:
     """Fill the heap with all the graph nodes after sorting them."""
     h = []
     children = get_children(root, graph)
-    for child in children:
+    for _ in children:
         heapq.heappush(h, get_children(root, graph))
     return h
 
 
-def get_children(node: Node, graph: Graph, is_root: bool = False) -> List[
-    Node]:
+def get_children(node: Node, graph: Graph,
+                 is_root: bool = False) -> List[Node]:
     """
     Get all nodes the given node share edge with.
+    :param is_root:
     :param node: given node to search in all edges in graph.
     :param graph: graph to search edges given node involve in.
     :return: all edges given node is part of.
     """
-    #TODO: split into 2 diffetent functions. 1st - get_children 2nd -
+    # TODO: split into 2 diffetent functions. 1st - get_children 2nd -
     # insert_root_children. Moreover, add mst list and remember to insert
     # root & his children.
     children = []
@@ -137,6 +138,7 @@ def get_mst(last_node: Node) -> List[Node]:
         mst.append(last_node)
         last_node = last_node.father
     return mst
+
 
 if __name__ == "__main__":
     main()
