@@ -9,12 +9,27 @@ class Node:
     key: int = 0
     father = None
 
+    def __gt__(self, other):
+        return self.key > other.key
+
+    def __lt__(self, other):
+        return self.key < other.key
+
+    def __sub__(self, other):
+        return self.key - other.key
+
+    def __add__(self, other):
+        return self.key + other.key
+
+    def __mul__(self, other):
+        return self.key * other.key
+
 
 class Edge:
-    def __init__(self, node1: Node, node2: Node):
+    def __init__(self, node1: Node, node2: Node, weight: int):
         self.node1 = node1
         self.node2 = node2
-        self.weight = 0
+        self.weight = weight
         self.visited = False
 
     def __gt__(self, other):
