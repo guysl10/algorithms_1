@@ -113,14 +113,12 @@ def generate_graph() -> Graph:
     return Graph(nodes, edges)
 
 
-def main():
-    new_graph = generate_graph()
-    print("##############################\nbefore:\n")
-    print_graph(new_graph)
-    a = prim(new_graph, random.choice(new_graph.v), weight)
-    print("##############################\nafter:\n")
-    print_graph(new_graph)
-    print(a)
+def get_mst(last_node: Node) -> List[Node]:
+    mst = []
+    while last_node.father is not None:
+        mst.append(last_node)
+        last_node = last_node.father
+    return mst
 
 
 def print_graph(graph: Graph):
@@ -132,12 +130,20 @@ def print_graph(graph: Graph):
         print(f"{edge.node1} - {edge.node2}  %{edge.weight}")
 
 
-def get_mst(last_node: Node) -> List[Node]:
-    mst = []
-    while last_node.father is not None:
-        mst.append(last_node)
-        last_node = last_node.father
-    return mst
+def inset_new_edge(graph: Graph, mst: List[Node], new_edge: Edge):
+    # TODO: ALOSH will continue tomorrow.
+    mst.append(new_edge)
+    ...
+
+
+def main():
+    new_graph = generate_graph()
+    print("##############################\nbefore:\n")
+    print_graph(new_graph)
+    a = prim(new_graph, random.choice(new_graph.v), weight)
+    print("##############################\nafter:\n")
+    print_graph(new_graph)
+    print(a)
 
 
 if __name__ == "__main__":
