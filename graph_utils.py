@@ -108,5 +108,6 @@ def main():
     #prim(new_graph, random.choice(new_graph.v), weight)
     print(new_graph)
 
+
 if __name__ == "__main__":
     main()
