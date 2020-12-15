@@ -1,6 +1,6 @@
 import itertools
 import random
-from typing import List
+from typing import List, Tuple
 import heapq
 
 from graph import Edge, Graph, Node
@@ -22,17 +22,13 @@ def heap_sort(graph: Graph, root: Node) -> List[Node]:
     h = []
 
 
-def fill_heap(graph: Graph, root: Node, h: List[Node]) -> List[Node]:
+def heap_insert(graph: Graph, root: Node) -> List[Node]:
     """Fill the heap with all the graph nodes after sorting them."""
-    if root is None:
-        return []
-
-    if root not in h:
-        heapq.heappush(h, root)
-    children = sorted(get_children(root, graph))
+    h = []
+    children = get_children(root, graph)
     for child in children:
-        for node in fill_heap(graph, child, h):
-            heapq.heappush(h, node)
+        heapq.heappush(h, get_children(root, graph))
+    return h
 
 
 def get_children(node: Node, graph: Graph) -> List[Node]:
@@ -46,49 +42,54 @@ def get_children(node: Node, graph: Graph) -> List[Node]:
     for edge in graph.e:
         if node in (edge.node1, edge.node1) and not edge.visited:
             if node == edge.node1:
+                edge.node2.key = edge.weight
                 children.append(edge.node2)
             else:
+                edge.node1.key = edge.weight
                 children.append(edge.node1)
         edge.visited = True
     return children
 
 
-def weight(graph: Graph, edge_index: int) -> int:
+def weight(graph: Graph, node1: Node, node2: Node) -> int:
     """
     Calculate the weight of given edge index. if already exist just return
     the weight value.
+    :param node2:
+    :param node1:
     :param graph: given graph
-    :param edge_index: given edge index for list in graph.
     :return: weight of needed edge.
     """
-    if graph.e[edge_index].weight == 0:
-        graph.e[edge_index].weight = random.randint(WEIGHT_START_RANGE,
-                                                    WEIGHT_END_RANGE)
-    return graph.e[edge_index].weight
+    for edge in graph.e:
+        if (node1, node2) in [(edge.node1, edge.node2),(edge.node2,
+                                                        edge.node1)]
+            return edge.weight
+    return -1
 
 
-# def prim(graph: Graph, root: Node, weight: callable):
-#     """
-#     Prim's algorithm
-#     :param graph: given graph to run prim's algorithm on.
-#     :param root: starting node of prim's algorithm.
-#     :param weight: weight function of node.
-#     :return: NMT graph (after running prim's algorithm).
-#     """
-#     for node in graph.v:
-#         node.key = INFINITY_VALUE
-#
-#     q = heap_sort(graph.e, root)
-#
-#     root.key = 0
-#     root.parent = None
-#
-#     while q:
-#         min_edge = heapq.heappop(q)
-#
-#         min_child = min(get_children(min_edge, graph))
-#
-#         min_child.father = min_child
+def prim(graph: Graph, root: Node, weight: callable):
+    """
+    Prim's algorithm
+    :param graph: given graph to run prim's algorithm on.
+    :param root: starting node of prim's algorithm.
+    :param weight: weight function of node.
+    :return: NMT graph (after running prim's algorithm).
+    """
+    for node in graph.v:
+        node.key = INFINITY_VALUE
+
+    q = heap_insert(graph, root))
+
+    root.key = 0
+    root.parent = None
+
+    while q:
+        u = heapq.heappop(q)
+        for v in get_children(u, graph):
+            w = weight(u, v)
+            if w < u.key:
+                v.father = u
+                v.key = w
 
 
 def generate_graph() -> Graph:
@@ -107,6 +108,8 @@ def generate_graph() -> Graph:
 def main():
     new_graph = generate_graph()
     #prim(new_graph, random.choice(new_graph.v), weight)
+    heap_insert(new_graph, new_graph.v[0], [])
+
     print(new_graph)
 
 
