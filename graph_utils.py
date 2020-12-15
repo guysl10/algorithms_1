@@ -62,7 +62,7 @@ def weight(graph: Graph, node1: Node, node2: Node) -> int:
     """
     for edge in graph.e:
         if (node1, node2) in [(edge.node1, edge.node2),(edge.node2,
-                                                        edge.node1)]
+                                                        edge.node1)]:
             return edge.weight
     return -1
 
@@ -78,7 +78,8 @@ def prim(graph: Graph, root: Node, weight: callable):
     for node in graph.v:
         node.key = INFINITY_VALUE
 
-    q = heap_insert(graph, root))
+    q = []
+    heapq.heappush(q, root)
 
     root.key = 0
     root.parent = None
@@ -86,10 +87,11 @@ def prim(graph: Graph, root: Node, weight: callable):
     while q:
         u = heapq.heappop(q)
         for v in get_children(u, graph):
-            w = weight(u, v)
-            if w < u.key:
+            w = weight(graph, u, v)
+            if w < u.key and v not in q:
                 v.father = u
                 v.key = w
+                heapq.heappush(q, v)
 
 
 def generate_graph() -> Graph:
@@ -107,9 +109,7 @@ def generate_graph() -> Graph:
 
 def main():
     new_graph = generate_graph()
-    #prim(new_graph, random.choice(new_graph.v), weight)
-    heap_insert(new_graph, new_graph.v[0], [])
-
+    prim(new_graph, random.choice(new_graph.v), weight)
     print(new_graph)
 
 
