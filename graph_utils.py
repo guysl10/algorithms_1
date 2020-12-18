@@ -20,9 +20,6 @@ def get_children(node: Node, graph: Graph,
     :param graph: graph to search edges given node involve in.
     :return: all edges given node is part of.
     """
-    # TODO: split into 2 different functions. 1st - get_children 2nd -
-    # insert_root_children. Moreover, add mst list and remember to insert
-    # root & his children.
     children = []
     children_edges = []
     for edge in graph.e:
@@ -54,7 +51,8 @@ def weight(graph: Graph, node1: Node, node2: Node) -> int:
     return -1
 
 
-def initial_prim(graph: Graph, root: Node) -> List[Node]:
+def initial_prim(graph: Graph,
+                 root: Node) -> Tuple[list, List[Tuple[int, int, int]]]:
     """
     Initial variables for Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
@@ -70,12 +68,13 @@ def initial_prim(graph: Graph, root: Node) -> List[Node]:
 
     root.key = 0
     root.parent = None
-    return q
+    mst = [(edge.node1.id, edge.node2.id, edge.weight) for edge in graph.e
+           if root in (edge.node1, edge.node2)]
+    return q, mst
 
 
-def prim(graph: Graph, root: Node, get_weight: callable) -> List[Tuple[int,
-                                                                       int,
-                                                                       int]]:
+def prim(graph: Graph, root: Node,
+         get_weight: callable) -> List[Tuple[int, int, int]]:
     """
     Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
@@ -83,9 +82,9 @@ def prim(graph: Graph, root: Node, get_weight: callable) -> List[Tuple[int,
     :param get_weight: weight function of node.
     :return: NMT graph (after running prim's algorithm).
     """
-    q = initial_prim(graph, root)
-    mst = [(edge.node1.id, edge.node2.id, edge.weight) for edge in graph.e
-           if root in (edge.node1, edge.node2)]
+    mst: List[Tuple[int, int, int]]
+    q, mst = initial_prim(graph, root)
+
     while q:
         u = heapq.heappop(q)
         u_children, u_edges = get_children(u, graph)
@@ -95,7 +94,6 @@ def prim(graph: Graph, root: Node, get_weight: callable) -> List[Tuple[int,
                 v.father = u
                 v.key = w
                 heapq.heappush(q, v)
-
                 mst.append((u.id, v.id, v.key))
     return mst
 
@@ -123,18 +121,18 @@ def get_mst(last_node: Node) -> List[Node]:
 
 
 def print_graph(graph: Graph):
-    print("nodes:")
+    print("# Nodes:")
     for node in graph.v:
-        print(f"{node} %{node.key}  ~{node.father}")
-    print("edges:")
+        print(f"{node.id} Weight={node.key}  Father={node.father}")
+    print("# Edges:")
     for edge in graph.e:
-        print(f"{edge.node1} - {edge.node2}  %{edge.weight}")
+        print(f"{edge.node1.id}<->{edge.node2.id}  Weight={edge.weight}")
 
 
 def print_mst(mst: List[Tuple[int, int, int]]):
-    print("edges:")
+    print("# MST:")
     for edge_details in mst:
-        print(f"|{edge_details[0]}-{edge_details[1]} weight"
+        print(f"|{edge_details[0]}<->{edge_details[1]} Weight"
               f"={edge_details[2]}|", end='')
 
 
