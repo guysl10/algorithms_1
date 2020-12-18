@@ -2,7 +2,6 @@ import heapq
 import itertools
 import random
 from typing import List
-
 from graph import Edge, Graph, Node
 
 WEIGHT_START_RANGE = 1
@@ -30,24 +29,19 @@ def get_children(node: Node, graph: Graph,
     :param graph: graph to search edges given node involve in.
     :return: all edges given node is part of.
     """
-    # TODO: split into 2 diffetent functions. 1st - get_children 2nd -
+    # TODO: split into 2 different functions. 1st - get_children 2nd -
     # insert_root_children. Moreover, add mst list and remember to insert
     # root & his children.
     children = []
     for edge in graph.e:
         if node in (edge.node1, edge.node2) and not edge.visited:
-            if node == edge.node1:
-                if is_root:
-                    edge.node2.father = node
-                    edge.node2.key = edge.weight
-                children.append(edge.node2)
+            child = [n for n in (edge.node1, edge.node2) if n != node][0]
+            if is_root:
+                child.father = node
+                child.key = edge.weight
             else:
-                if is_root:
-                    edge.node1.father = node
-                    edge.node1.key = edge.weight
-                children.append(edge.node1)
-            if not is_root:
                 edge.visited = True
+            children.append(child)
     return children
 
 
@@ -67,30 +61,41 @@ def weight(graph: Graph, node1: Node, node2: Node) -> int:
     return -1
 
 
-def prim(graph: Graph, root: Node, weighter: callable) -> List[Node]:
+def initial_prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
     """
-    Prim's algorithm
+    Initial variables for Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
     :param root: starting node of prim's algorithm.
-    :param weighter: weight function of node.
-    :return: NMT graph (after running prim's algorithm).
+    :param get_weight: weight function of node.
+    :return: The Q for prim's algorithm.
     """
     for node in graph.v:
         node.key = INFINITY_VALUE
-
     q = []
-    last_node = None
     children = get_children(root, graph, True)
     for child in children:
         heapq.heappush(q, child)
 
     root.key = 0
     root.parent = None
+    return q
+
+
+def prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
+    """
+    Prim's algorithm.
+    :param graph: given graph to run prim's algorithm on.
+    :param root: starting node of prim's algorithm.
+    :param get_weight: weight function of node.
+    :return: NMT graph (after running prim's algorithm).
+    """
+    last_node = None
+    q = initial_prim(graph, root, get_weight)
     while q:
         u = heapq.heappop(q)
         u_children = get_children(u, graph)
         for v in u_children:
-            w = weighter(graph, u, v)
+            w = get_weight(graph, u, v)
             if w < v.key and v not in q:
                 v.father = u
                 v.key = w
