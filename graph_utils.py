@@ -1,7 +1,7 @@
 import heapq
 import itertools
 import random
-from typing import List
+from typing import List, Tuple
 from graph import Edge, Graph, Node
 
 WEIGHT_START_RANGE = 1
@@ -11,17 +11,8 @@ NODES_SIZE_END_RANGE = 6
 INFINITY_VALUE = 999
 
 
-def heap_insert(graph: Graph, root: Node) -> List[Node]:
-    """Fill the heap with all the graph nodes after sorting them."""
-    h = []
-    children = get_children(root, graph)
-    for _ in children:
-        heapq.heappush(h, get_children(root, graph))
-    return h
-
-
 def get_children(node: Node, graph: Graph,
-                 is_root: bool = False) -> List[Node]:
+                 is_root: bool = False) -> Tuple[List[Node], List[Edge]]:
     """
     Get all nodes the given node share edge with.
     :param is_root:
@@ -33,6 +24,7 @@ def get_children(node: Node, graph: Graph,
     # insert_root_children. Moreover, add mst list and remember to insert
     # root & his children.
     children = []
+    children_edges = []
     for edge in graph.e:
         if node in (edge.node1, edge.node2) and not edge.visited:
             child = [n for n in (edge.node1, edge.node2) if n != node][0]
@@ -42,7 +34,8 @@ def get_children(node: Node, graph: Graph,
             else:
                 edge.visited = True
             children.append(child)
-    return children
+            children_edges.append(edge)
+    return children, children_edges
 
 
 def weight(graph: Graph, node1: Node, node2: Node) -> int:
@@ -61,18 +54,17 @@ def weight(graph: Graph, node1: Node, node2: Node) -> int:
     return -1
 
 
-def initial_prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
+def initial_prim(graph: Graph, root: Node) -> List[Node]:
     """
     Initial variables for Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
     :param root: starting node of prim's algorithm.
-    :param get_weight: weight function of node.
     :return: The Q for prim's algorithm.
     """
     for node in graph.v:
         node.key = INFINITY_VALUE
     q = []
-    children = get_children(root, graph, True)
+    children, _ = get_children(root, graph, True)
     for child in children:
         heapq.heappush(q, child)
 
@@ -81,7 +73,9 @@ def initial_prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
     return q
 
 
-def prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
+def prim(graph: Graph, root: Node, get_weight: callable) -> List[Tuple[int,
+                                                                       int,
+                                                                       int]]:
     """
     Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
@@ -89,19 +83,21 @@ def prim(graph: Graph, root: Node, get_weight: callable) -> List[Node]:
     :param get_weight: weight function of node.
     :return: NMT graph (after running prim's algorithm).
     """
-    last_node = None
-    q = initial_prim(graph, root, get_weight)
+    q = initial_prim(graph, root)
+    mst = [(edge.node1.id, edge.node2.id, edge.weight) for edge in graph.e
+           if root in (edge.node1, edge.node2)]
     while q:
         u = heapq.heappop(q)
-        u_children = get_children(u, graph)
+        u_children, u_edges = get_children(u, graph)
         for v in u_children:
             w = get_weight(graph, u, v)
             if w < v.key and v not in q:
                 v.father = u
                 v.key = w
                 heapq.heappush(q, v)
-                last_node = v
-    return get_mst(last_node)
+
+                mst.append((u.id, v.id, v.key))
+    return mst
 
 
 def generate_graph() -> Graph:
@@ -135,6 +131,13 @@ def print_graph(graph: Graph):
         print(f"{edge.node1} - {edge.node2}  %{edge.weight}")
 
 
+def print_mst(mst: List[Tuple[int, int, int]]):
+    print("edges:")
+    for edge_details in mst:
+        print(f"|{edge_details[0]}-{edge_details[1]} weight"
+              f"={edge_details[2]}|", end='')
+
+
 def inset_new_edge(graph: Graph, mst: List[Node], new_edge: Edge):
     # TODO: ALOSH will continue tomorrow.
     mst.append(new_edge)
@@ -145,10 +148,10 @@ def main():
     new_graph = generate_graph()
     print("##############################\nbefore:\n")
     print_graph(new_graph)
-    a = prim(new_graph, random.choice(new_graph.v), weight)
+    mst = prim(new_graph, random.choice(new_graph.v), weight)
     print("##############################\nafter:\n")
     print_graph(new_graph)
-    print(a)
+    print_mst(mst)
 
 
 if __name__ == "__main__":
