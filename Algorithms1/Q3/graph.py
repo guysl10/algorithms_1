@@ -50,6 +50,7 @@ class Edge:
     def get_nodes(self):
         return self.node1, self.node2
 
+
 class Graph:
     """
     Represent a graph without directions.
@@ -62,5 +63,14 @@ class Graph:
     def __init__(self, v: List[Node], e: List[Edge]):
         self.v = v
         self.e = e
-        self.visited = [False] * len(v)
+
+    def remove_edge(self, e: Edge):
+        """
+
+        :param e:
+        :return:
+        """
+        for edge in self.e:
+            if edge.node1 in (e.node1, e.node2) and edge.node2 in (e.node1, e.node2):
+                self.e.remove(edge)
 

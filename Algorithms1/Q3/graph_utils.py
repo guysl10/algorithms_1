@@ -129,48 +129,54 @@ def print_graph(graph: Graph):
         print(f"{edge.node1.id}<->{edge.node2.id}  Weight={edge.weight}")
 
 
-
-
-
 def inset_new_edge(graph: Graph, new_edge: Edge):
+    """
+    inserting new edge to the mst graph and change the graph accordingly
+    :param graph: mst graph
+    :param new_edge: an edge to add to the mst graph
+    """
     graph.e.append(new_edge)
-    cycles = []
-    for node in graph.v:
-        dfs_detect_cycle_undirected_graph(graph, node, cycles)
+    graph.remove_edge(find_heaviest_edge(new_edge))
+
+    print(f"##############################\nafter adding edge: {new_edge.node1}, {new_edge.node2}, {new_edge.weight}\n")
+    print_graph(graph)
 
 
-def dfs_detect_cycle_undirected_graph(graph: Graph, src: Node, cycle: List[Node]):
+def find_heaviest_edge(new_edge: Edge) -> Edge:
     """
-
-    :param graph:
-    :param src:
-    :param cycle:
-    :return:
+    find the heaviest edge in the cycle to remove it later, maximum time O(n)
+    :param new_edge: the edge to add to the mst graph
+    :return: return the heaviest edge in the cycle
     """
-    graph.visited[src.id] = True
+    node1_pointer = new_edge.node1
+    node2_pointer = new_edge.node2
+    heaviest_edge = new_edge
 
-    for adj_node in get_children(src, graph)[0]:
-        if not graph.visited[adj_node.id]:
-            adj_node.father = src
-            cycle.append(dfs_detect_cycle_undirected_graph(graph, adj_node, cycle))
-        elif src.father != adj_node:
-            # Already visited child but it's not the parent of our src (root) node
-            print("Found a cycle in graph")
-            return adj_node
+    while node1_pointer != node2_pointer:
+        if node1_pointer.father:
+            temp_edge = Edge(node1_pointer, node1_pointer.father, node1_pointer.key)
+            if temp_edge > heaviest_edge:
+                heaviest_edge = temp_edge
+            node1_pointer = node1_pointer.father
+
+        if node2_pointer.father:
+            temp_edge = Edge(node2_pointer, node2_pointer.father, node2_pointer.key)
+            if temp_edge > heaviest_edge:
+                heaviest_edge = temp_edge
+            node2_pointer = node2_pointer.father if node2_pointer.father else node2_pointer
+
+    return heaviest_edge
 
 
 def main():
     new_graph = generate_graph()
     print("##############################\nbefore:\n")
     print_graph(new_graph)
-    mst = prim(new_graph, random.choice(new_graph.v), weight)
+    root = random.choice(new_graph.v)
+    mst = prim(new_graph, root, weight)
     print("##############################\nafter mst:\n")
 
     print_graph(mst)
-    inset_new_edge(new_graph, Edge(new_graph.v[-1], new_graph.v[-2], 10))
-
-
-
-
+    inset_new_edge(mst, Edge(mst.v[-1], root, random.randint(1, 4)))
 if __name__ == "__main__":
     main()
