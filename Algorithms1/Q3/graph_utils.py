@@ -2,7 +2,8 @@ import heapq
 import itertools
 import random
 from typing import List, Tuple
-from graph import Edge, Graph, Node
+
+from Algorithms1.Q3.graph import Graph, Edge, Node
 
 WEIGHT_START_RANGE = 1
 WEIGHT_END_RANGE = 10
@@ -52,7 +53,7 @@ def weight(graph: Graph, node1: Node, node2: Node) -> int:
 
 
 def initial_prim(graph: Graph,
-                 root: Node) -> Tuple[list, List[Tuple[int, int, int]]]:
+                 root: Node) -> Tuple[list, Graph]:
     """
     Initial variables for Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
@@ -62,19 +63,18 @@ def initial_prim(graph: Graph,
     for node in graph.v:
         node.key = INFINITY_VALUE
     q = []
-    children, _ = get_children(root, graph, True)
+    children, root_edges = get_children(root, graph, True)
     for child in children:
         heapq.heappush(q, child)
 
     root.key = 0
     root.parent = None
-    mst = [(edge.node1.id, edge.node2.id, edge.weight) for edge in graph.e
-           if root in (edge.node1, edge.node2)]
-    return q, mst
+    children.insert(0, root)
+    return q, Graph(children, root_edges)
 
 
 def prim(graph: Graph, root: Node,
-         get_weight: callable) -> List[Tuple[int, int, int]]:
+         get_weight: callable) -> Graph:
     """
     Prim's algorithm.
     :param graph: given graph to run prim's algorithm on.
@@ -82,7 +82,6 @@ def prim(graph: Graph, root: Node,
     :param get_weight: weight function of node.
     :return: NMT graph (after running prim's algorithm).
     """
-    mst: List[Tuple[int, int, int]]
     q, mst = initial_prim(graph, root)
 
     while q:
@@ -94,7 +93,8 @@ def prim(graph: Graph, root: Node,
                 v.father = u
                 v.key = w
                 heapq.heappush(q, v)
-                mst.append((u.id, v.id, v.key))
+                mst.e.append(Edge(u, v, v.key))
+                mst.v.append(v)
     return mst
 
 
@@ -129,17 +129,34 @@ def print_graph(graph: Graph):
         print(f"{edge.node1.id}<->{edge.node2.id}  Weight={edge.weight}")
 
 
-def print_mst(mst: List[Tuple[int, int, int]]):
-    print("# MST:")
-    for edge_details in mst:
-        print(f"|{edge_details[0]}<->{edge_details[1]} Weight"
-              f"={edge_details[2]}|", end='')
 
 
-def inset_new_edge(graph: Graph, mst: List[Node], new_edge: Edge):
-    # TODO: ALOSH will continue tomorrow.
-    mst.append(new_edge)
-    ...
+
+def inset_new_edge(graph: Graph, new_edge: Edge):
+    graph.e.append(new_edge)
+    cycles = []
+    for node in graph.v:
+        dfs_detect_cycle_undirected_graph(graph, node, cycles)
+
+
+def dfs_detect_cycle_undirected_graph(graph: Graph, src: Node, cycle: List[Node]):
+    """
+
+    :param graph:
+    :param src:
+    :param cycle:
+    :return:
+    """
+    graph.visited[src.id] = True
+
+    for adj_node in get_children(src, graph)[0]:
+        if not graph.visited[adj_node.id]:
+            adj_node.father = src
+            cycle.append(dfs_detect_cycle_undirected_graph(graph, adj_node, cycle))
+        elif src.father != adj_node:
+            # Already visited child but it's not the parent of our src (root) node
+            print("Found a cycle in graph")
+            return adj_node
 
 
 def main():
@@ -147,9 +164,12 @@ def main():
     print("##############################\nbefore:\n")
     print_graph(new_graph)
     mst = prim(new_graph, random.choice(new_graph.v), weight)
-    print("##############################\nafter:\n")
-    print_graph(new_graph)
-    print_mst(mst)
+    print("##############################\nafter mst:\n")
+
+    print_graph(mst)
+    inset_new_edge(new_graph, Edge(new_graph.v[-1], new_graph.v[-2], 10))
+
+
 
 
 if __name__ == "__main__":

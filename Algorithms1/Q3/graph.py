@@ -47,8 +47,9 @@ class Edge:
     def __mul__(self, other):
         return self.weight * other.weight
 
+    def get_nodes(self):
+        return self.node1, self.node2
 
-@dataclass
 class Graph:
     """
     Represent a graph without directions.
@@ -57,3 +58,9 @@ class Graph:
     """
     v: List[Node]
     e: List[Edge]
+
+    def __init__(self, v: List[Node], e: List[Edge]):
+        self.v = v
+        self.e = e
+        self.visited = [False] * len(v)
+
