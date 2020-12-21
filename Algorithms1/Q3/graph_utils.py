@@ -6,10 +6,13 @@ from typing import List, Tuple
 from Algorithms1.Q3.graph import Graph, Edge, Node
 
 WEIGHT_START_RANGE = 1
-WEIGHT_END_RANGE = 10
-NODES_SIZE_START_RANGE = 4
-NODES_SIZE_END_RANGE = 6
+WEIGHT_END_RANGE = 30
+NODES_SIZE_START_RANGE = 20
+NODES_SIZE_END_RANGE = 50
 INFINITY_VALUE = 999
+
+MAX_EDGE_RANGE = 70
+MIN_EDGE_RANGE = 50
 
 
 def get_children(node: Node, graph: Graph,
@@ -103,7 +106,7 @@ def generate_graph() -> Graph:
     num_of_nodes = random.randint(NODES_SIZE_START_RANGE, NODES_SIZE_END_RANGE)
     nodes = [Node(node_id) for node_id in range(num_of_nodes)]
     combinations = list(itertools.combinations(nodes, 2))
-    edges = [Edge(first, second, random.randint(1, 10)) for first, second in
+    edges = [Edge(first, second, random.randint(MIN_EDGE_RANGE, MAX_EDGE_RANGE)) for first, second in
              combinations]
 
     for edge_index, edge in enumerate(edges):
@@ -177,6 +180,11 @@ def main():
     print("##############################\nafter mst:\n")
 
     print_graph(mst)
-    inset_new_edge(mst, Edge(mst.v[-1], root, random.randint(1, 4)))
+    print("Adding an edge that doesn't change MST")
+    inset_new_edge(mst, Edge(mst.v[-1], root, WEIGHT_END_RANGE))
+
+    print("Adding an edge that changes MST")
+    inset_new_edge(mst, Edge(mst.v[-1], root, WEIGHT_START_RANGE))
+
 if __name__ == "__main__":
     main()
