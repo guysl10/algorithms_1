@@ -1,3 +1,13 @@
+"""
+
+NAME: Alex Troitsky
+ID: 321245813
+
+NAME: Guy Salomon
+ID: 316443845
+
+"""
+
 from dataclasses import dataclass
 from random import random
 from typing import List

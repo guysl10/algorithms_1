@@ -1,3 +1,12 @@
+"""
+
+NAME: Alex Troitsky
+ID: 321245813
+
+NAME: Guy Salomon
+ID: 316443845
+
+"""
 import heapq
 import itertools
 import random
